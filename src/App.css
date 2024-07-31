@@ -107,6 +107,7 @@ button {
   color: white;
   border-radius: 5px;
   padding: 7px 0;
+  cursor: pointer;
 }
 
 form.login h1, form.register h1 {
@@ -150,4 +151,28 @@ div.post-page div.author {
 
 div.post-page div.content{
   line-height: 1.6rem;
+}
+
+div.edit-row {
+  text-align: center;
+}
+
+div.post-page a.edit-btn {
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  display: inline-flex;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  align-items: center;
+  gap: 5px;
+}
+
+a svg {
+  height: 20px;
+}
+
+a {
+  cursor: pointer;
 }

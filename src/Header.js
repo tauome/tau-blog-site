@@ -32,6 +32,7 @@ const username =  userInfo?.username;
         <nav>
             {username && (
                 <>
+                    <span>Hello, @{username}</span>
                     <Link to={'/create'}>Create New Post</Link>
                     <a onClick={logout}>Logout</a>
                 </>
