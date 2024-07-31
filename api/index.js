@@ -17,6 +17,7 @@ const secret = 'asdfe45we45w345wegw345werjktjwertkj';
 app.use(cors({credentials: true, origin: 'http://localhost:3000'})); 
 app.use(express.json());
 app.use(cookieParser()); 
+app.use('/uploads', express.static(__dirname + '/uploads'));
 
 mongoose.connect('mongodb+srv://blog:kTSynLJisDsMpagb@cluster0.mnvwtnr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 
@@ -71,15 +72,27 @@ app.post('/login', async (req,res) => {
     const newPath = path +'.'+ext;
     fs.renameSync(path, newPath )
 
-    const {title, summary, content} = req.body; 
-    const postDoc = await PostModel.create({
+    // we use jwt.verify to get user id 
+    const {token} = req.cookies; 
+    jwt.verify(token, secret, {}, async (err, info) => {
+        if (err) throw err;
+        const {title, summary, content} = req.body; 
+        const postDoc = await PostModel.create({
         title,
         summary,
-        content,
-        cover: newPath
-    })
-    res.json(postDoc); 
+        content, 
+        cover: newPath,
+        author: info.id
+    }) 
+        res.json(postDoc); 
+    });
   });
+
+  app.get('/post', async (req, res) => {
+    const posts = await PostModel.find().populate('author', ['username']).sort({createdAt: - 1})
+    res.json(posts); 
+  }); 
+
 
 
 app.listen(4000);
