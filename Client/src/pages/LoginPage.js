@@ -7,10 +7,11 @@ export default function LoginPage() {
     const [password, setPassword] = useState(''); 
     const [redirect, setRedirect] = useState(false);
     const {setUserInfo} = useContext(UserContext); 
+    const baseUrl = process.env.baseUrl; 
 
     async function login(e) {
         e.preventDefault(); 
-        const response = await fetch('http://localhost:4000/login', {
+        const response = await fetch(`${baseUrl}/login`, {
             method: 'POST', 
             body: JSON.stringify({username, password}), 
             headers: {'Content-Type': 'application/json'},

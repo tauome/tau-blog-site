@@ -10,10 +10,11 @@ export default function EditPost() {
     const [summary, setSummary] = useState('');
     const [content, setContent] = useState('');
     const [files, setFiles] = useState('');
-    const [redirect, setRedirect] = useState(false); 
+    const [redirect, setRedirect] = useState(false);
+    const baseUrl = process.env.baseUrl;  
 
     useEffect(() => {
-        fetch('http://localhost:4000/post/'+id).then(response => {
+        fetch(`${baseUrl}/post/`+id).then(response => {
             response.json().then(postInfo => {
                 setTitle(postInfo.title)
                 setSummary(postInfo.summary)
@@ -32,7 +33,7 @@ export default function EditPost() {
         data.set('id', id); 
 
         e.preventDefault(); 
-        await fetch('http://localhost:4000/post' , {
+        await fetch(`${baseUrl}/post` , {
             method: 'PUT',
             body: data,
             credentials: 'include'

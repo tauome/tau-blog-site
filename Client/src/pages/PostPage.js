@@ -9,9 +9,10 @@ export default function PostPage() {
   const {id} = useParams();
   const [postInfo, setPostInfo] = useState(null); 
   const {userInfo} = useContext(UserContext);
+  const baseUrl = process.env.baseUrl; 
   
   useEffect(() => {
-    fetch('http://localhost:4000/post/'+id).then(response => {
+    fetch(`${baseUrl}/post/`+id).then(response => {
         response.json().then(postInfo => {
             setPostInfo(postInfo); 
         })

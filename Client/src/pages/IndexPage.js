@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import Post from "../Post";
 
 export default function IndexPage() {
-    const [posts, setPosts] = useState([]); 
+    const [posts, setPosts] = useState([]);
+    const baseUrl = process.env.baseUrl;  
 
     useEffect(() => {
-        fetch('http://localhost:4000/post').then(response => {
+        fetch(`${baseUrl}/post`).then(response => {
             response.json().then(posts => {
                 setPosts(posts); 
             })

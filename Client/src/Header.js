@@ -5,8 +5,10 @@ import { UserContext } from './UserContext';
 export default function Header() {
 const {setUserInfo, userInfo} = useContext(UserContext);
 
+const baseUrl = process.env.baseUrl; 
+
 useEffect(() => {
-    fetch('http://localhost:4000/profile', {
+    fetch(`${baseUrl}/profile`, {
         credentials: 'include'
     }).then(res => {
         res.json().then(userInfo => {
@@ -17,7 +19,7 @@ useEffect(() => {
 
 //invalidate the cookie
 async function logout() {
-    await fetch('http://localhost:4000/logout', {
+    await fetch(`${baseUrl}/logout`, {
         credentials: 'include',
         method: 'POST'
     });

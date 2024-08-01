@@ -9,6 +9,7 @@ export default function CreatePost() {
   const [content, setContent] = useState('');
   const [files, setFiles] = useState(''); 
   const [redirect, setRedirect] = useState(false); 
+  const baseUrl = process.env.baseUrl; 
 
   async function createNewPost(e) {
     const data = new FormData();
@@ -18,7 +19,7 @@ export default function CreatePost() {
     data.set('file', files[0]);
 
     e.preventDefault(); 
-    const response = await fetch('http://localhost:4000/post', {
+    const response = await fetch(`${baseUrl}/post`, {
         method: 'POST',
         body: data,
         credentials: 'include'
