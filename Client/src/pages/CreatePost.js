@@ -19,7 +19,7 @@ export default function CreatePost() {
     data.set('file', files[0]);
 
     e.preventDefault(); 
-    const response = await fetch(`tau-blog-site.vercel.app/api/post`, {
+    const response = await fetch(`tau-blog-site.vercel.app/post`, {
         method: 'POST',
         body: data,
         credentials: 'include'
