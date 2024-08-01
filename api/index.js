@@ -7,9 +7,11 @@ const PostModel = require('./models/Post');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser'); 
+const fs = require('fs');
 const multer = require('multer'); 
-const uploadMiddleware = multer({dest: 'uploads/'});
-const fs = require('fs'); 
+const uploadMiddleware = multer({dest: '/tmp'}); 
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+require('dotenv').config()
 
 const salt = bcrypt.genSaltSync(10);
 const secret = 'asdfe45we45w345wegw345werjktjwertkj';
@@ -19,10 +21,33 @@ app.use(express.json());
 app.use(cookieParser()); 
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
-mongoose.connect('mongodb+srv://blog:kTSynLJisDsMpagb@cluster0.mnvwtnr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+
+
+async function uploadtoS3(path, originalFilename, mimeType){
+    const client = new S3Client({
+        region: 'us-east-2',
+        credentials: {
+            accessKeyId: process.env.S3_ACCESS_KEY,
+            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+        }
+    }); 
+    const parts = originalFilename.split('.');
+    const ext = parts[parts.length - 1 ]; 
+    const newFilename = Date.now() + '.' + ext; 
+    
+    const data = await client.send(new PutObjectCommand({
+        Bucket: 'tau-blog-app',
+        Body: fs.readFileSync(path), 
+        Key: newFilename,
+        ContentType: mimeType,
+        ACL: 'public-read'
+    })); 
+    return `https://tau-blog-app.s3.amazonaws.com/${newFilename}`; 
+}
 
 // register as user
 app.post('/register', async (req, res) => {
+    mongoose.connect(process.env.MONGODB_URI);
     const {username, password} = req.body;
     try {
         const userDoc = await UserModel.create({
@@ -38,6 +63,7 @@ app.post('/register', async (req, res) => {
 
 // login and sign jwt
 app.post('/login', async (req,res) => {
+    mongoose.connect(process.env.MONGODB_URI);
     const {username,password} = req.body;
     const userDoc = await UserModel.findOne({username});
     const passOk = bcrypt.compareSync(password, userDoc.password);
@@ -57,6 +83,7 @@ app.post('/login', async (req,res) => {
 
   // get user info using jwt
   app.get('/profile', (req, res) => {
+    mongoose.connect(process.env.MONGODB_URI);
     const {token} = req.cookies; 
     jwt.verify(token, secret, {}, (err, info) => {
         if (err) throw err;
@@ -72,11 +99,9 @@ app.post('/login', async (req,res) => {
 
  // create post
   app.post('/post',uploadMiddleware.single('file'), async (req,res) => {
-    const {originalname, path} = req.file;
-    const parts = originalname.split('.');
-    const ext = parts[parts.length - 1]; 
-    const newPath = path +'.'+ext;
-    fs.renameSync(path, newPath )
+    mongoose.connect(process.env.MONGODB_URI);
+    const {originalname, path, mimeType} = req.file;
+    const url = await uploadtoS3(path, originalname, mimeType);
 
     // we use jwt.verify to get user id 
     const {token} = req.cookies; 
@@ -87,7 +112,7 @@ app.post('/login', async (req,res) => {
         title,
         summary,
         content, 
-        cover: newPath,
+        cover: url,
         author: info.id
     }) 
         res.json(postDoc); 
@@ -96,12 +121,14 @@ app.post('/login', async (req,res) => {
 
   // get all posts
   app.get('/post', async (req, res) => {
+    mongoose.connect(process.env.MONGODB_URI);
     const posts = await PostModel.find().populate('author', ['username']).sort({createdAt: - 1})
     res.json(posts); 
   }); 
 
   // get single post
   app.get('/post/:id', async (req, res) =>{
+    mongoose.connect(process.env.MONGODB_URI);
     const {id} = req.params; 
     const postDoc = await PostModel.findById(id).populate('author', ['username']); 
     res.json(postDoc); 
@@ -109,13 +136,11 @@ app.post('/login', async (req,res) => {
 
   // update post
   app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
-    let newPath = null;
+    mongoose.connect(process.env.MONGODB_URI);
+    let url = null;
     if (req.file) {
-        const {originalname, path} = req.file;
-        const parts = originalname.split('.');
-        const ext = parts[parts.length - 1]; 
-        newPath = path +'.'+ext;
-        fs.renameSync(path, newPath )
+        const {originalname, path, mimeType} = req.file;
+        url = await uploadtoS3(path, originalname, mimeType);
     }
 
     const {token} = req.cookies; 
@@ -131,7 +156,7 @@ app.post('/login', async (req,res) => {
             title, 
             summary, 
             content,
-            cover: newPath ? newPath : postDoc.cover,
+            cover: url
         })
         res.json(postDoc); 
     });
