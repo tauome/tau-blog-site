@@ -8,7 +8,7 @@ const {setUserInfo, userInfo} = useContext(UserContext);
 const baseUrl = process.env.baseUrl; 
 
 useEffect(() => {
-    fetch(`tau-blog-site.vercel.app/profile`, {
+    fetch(`https://tau-blog-site.vercel.app/profile`, {
         credentials: 'include'
     }).then(res => {
         res.json().then(userInfo => {
@@ -19,7 +19,7 @@ useEffect(() => {
 
 //invalidate the cookie
 async function logout() {
-    await fetch(`tau-blog-site.vercel.app/logout`, {
+    await fetch(`https://tau-blog-site.vercel.app/logout`, {
         credentials: 'include',
         method: 'POST'
     });
