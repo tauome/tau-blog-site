@@ -7,7 +7,7 @@ export default function RegisterPage () {
 
     async function register (e) {
         e.preventDefault(); 
-        const response = await fetch(`https://tau-blog-site.vercel.app/api/register`, {
+        const response = await fetch(`https://tau-blog-site.vercel.app/register`, {
             method: 'POST',
             body: JSON.stringify({username, password}), 
             headers: {'Content-Type': 'application/json'}

@@ -11,7 +11,7 @@ export default function LoginPage() {
 
     async function login(e) {
         e.preventDefault(); 
-        const response = await fetch(`https://tau-blog-site.vercel.app/api/login`, {
+        const response = await fetch(`https://tau-blog-site.vercel.app/login`, {
             method: 'POST', 
             body: JSON.stringify({username, password}), 
             headers: {'Content-Type': 'application/json'},

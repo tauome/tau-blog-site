@@ -14,7 +14,7 @@ export default function EditPost() {
     const baseUrl = process.env.baseUrl;  
 
     useEffect(() => {
-        fetch(`https://tau-blog-site.vercel.app/api/post/`+id).then(response => {
+        fetch(`https://tau-blog-site.vercel.app/post/`+id).then(response => {
             response.json().then(postInfo => {
                 setTitle(postInfo.title)
                 setSummary(postInfo.summary)
@@ -33,7 +33,7 @@ export default function EditPost() {
         data.set('id', id); 
 
         e.preventDefault(); 
-        await fetch(`https://tau-blog-site.vercel.app/api/post` , {
+        await fetch(`https://tau-blog-site.vercel.app/post` , {
             method: 'PUT',
             body: data,
             credentials: 'include'
