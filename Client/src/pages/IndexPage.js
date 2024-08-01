@@ -6,7 +6,7 @@ export default function IndexPage() {
     const baseUrl = process.env.baseUrl;  
 
     useEffect(() => {
-        fetch(`${baseUrl}/post`).then(response => {
+        fetch(`tau-blog-site.vercel.app/api/post`).then(response => {
             response.json().then(posts => {
                 setPosts(posts); 
             })
