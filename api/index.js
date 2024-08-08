@@ -17,12 +17,14 @@ const salt = bcrypt.genSaltSync(10);
 const secret = 'asdfe45we45w345wegw345werjktjwertkj';
 
 const corsOptions = {
-    origin: (origin, callback) => {
-      callback(null, true);
-    },
-    credentials: true
-  };
-  
+  origin: (origin, callback) => {
+    // Allow any origin, but need to return the exact origin in the response
+    callback(null, origin);
+  },
+  credentials: true, // Allows cookies and other credentials
+  optionsSuccessStatus: 200 // Required for legacy browsers
+};
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser()); 
