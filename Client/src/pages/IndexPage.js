@@ -6,13 +6,25 @@ export default function IndexPage() {
     const baseUrl = process.env.baseUrl;  
     // http://localhost:4000
 
-    useEffect(() => {
-        fetch(`https://tau-blog-site.vercel.app/post`).then(response => {
-            response.json().then(posts => {
-                setPosts(posts); 
-            })
-        })
-    }, [])
+      useEffect(() => {
+        const fetchPostInfo = async () => {
+          try {
+            const response = await fetch(`https://tau-blog-site.vercel.app/api/post`);
+            
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            
+            const post = await response.json();
+            setPosts(post)
+          } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+          }
+        };
+         fetchPostInfo();
+        
+
+      }, []);  // Include id in the 
 
     return (
         <>

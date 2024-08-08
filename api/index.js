@@ -129,7 +129,7 @@ app.post('/login', async (req,res) => {
   });
 
   // get all posts
-  app.get('/post', async (req, res) => {
+  app.get('/api/post', async (req, res) => {
     mongoose.connect(process.env.MONGODB_URI);
     const posts = await PostModel.find().populate('author', ['username']).sort({createdAt: - 1})
     res.json(posts); 
