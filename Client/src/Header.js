@@ -7,19 +7,26 @@ const {setUserInfo, userInfo} = useContext(UserContext);
 const baseUrl = process.env.baseUrl; 
 
 useEffect(() => {
-    fetch(`https://tau-blog-site.vercel.app/profile`, {
-        credentials: 'include'
-    }).then(res => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            fetch('https://tau-blog-site.vercel.app/profile', {
+            headers: {
+            'Authorization': `Bearer ${token}`
+            }
+        }).then(res => {
         res.json().then(userInfo => {
-            setUserInfo(userInfo);
-        })
-    })
-}, [])
+        setUserInfo(userInfo);
+        })});
+        }
+    }, [setUserInfo]);
 
 //invalidate the cookie
 async function logout() {
+    const token = localStorage.getItem('token');
     await fetch(`https://tau-blog-site.vercel.app/logout`, {
-        credentials: 'include',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
         method: 'POST'
     });
     setUserInfo(null); 

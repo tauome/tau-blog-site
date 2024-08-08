@@ -9,13 +9,17 @@ export default function LoginPage() {
     const {setUserInfo} = useContext(UserContext); 
     const baseUrl = process.env.baseUrl; 
 
+
     async function login(e) {
         e.preventDefault(); 
+        const token = localStorage.getItem('token');
         const response = await fetch(`https://tau-blog-site.vercel.app/login`, {
             method: 'POST', 
             body: JSON.stringify({username, password}), 
-            headers: {'Content-Type': 'application/json'},
-            credentials: 'include'
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`    
+            },
         })
         if (response.ok) {
             response.json().then(userInfo => {
