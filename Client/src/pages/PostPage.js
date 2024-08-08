@@ -12,7 +12,7 @@ export default function PostPage() {
   const baseUrl = process.env.baseUrl; 
   
   useEffect(() => {
-    fetch(`https://tau-blog-site.vercel.app/post/`+id).then(response => {
+    fetch(`https://tau-blog-site.vercel.app/api/post/`+id).then(response => {
         response.json().then(postInfo => {
             setPostInfo(postInfo); 
         })

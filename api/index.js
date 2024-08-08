@@ -55,7 +55,7 @@ async function uploadtoS3(path, originalFilename, mimeType){
 }
 
 // register as user
-app.post('/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
     mongoose.connect(process.env.MONGODB_URI);
     const {username, password} = req.body;
     try {
@@ -71,7 +71,7 @@ app.post('/register', async (req, res) => {
 })
 
 // login and sign jwt
-app.post('/login', async (req,res) => {
+app.post('/api/login', async (req,res) => {
     mongoose.connect(process.env.MONGODB_URI);
     const {username,password} = req.body;
     const userDoc = await UserModel.findOne({username});
@@ -91,7 +91,7 @@ app.post('/login', async (req,res) => {
   });
 
   // get user info using jwt
-  app.get('/profile', (req, res) => {
+  app.get('/api/profile', (req, res) => {
     mongoose.connect(process.env.MONGODB_URI);
     const {token} = req.cookies; 
     jwt.verify(token, secret, {}, (err, info) => {
@@ -101,13 +101,13 @@ app.post('/login', async (req,res) => {
   })
 
   // logout of app
-  app.post('/logout', (req, res) => {
+  app.post('/api/logout', (req, res) => {
     res.cookie('token', '').json('ok');
   })
 
 
  // create post
-  app.post('/post',uploadMiddleware.single('file'), async (req,res) => {
+  app.post('/api/post',uploadMiddleware.single('file'), async (req,res) => {
     mongoose.connect(process.env.MONGODB_URI);
     const {originalname, path, mimeType} = req.file;
     const url = await uploadtoS3(path, originalname, mimeType);
@@ -136,7 +136,7 @@ app.post('/login', async (req,res) => {
   }); 
 
   // get single post
-  app.get('/post/:id', async (req, res) =>{
+  app.get('/api/post/:id', async (req, res) =>{
     mongoose.connect(process.env.MONGODB_URI);
     const {id} = req.params; 
     const postDoc = await PostModel.findById(id).populate('author', ['username']); 
@@ -144,7 +144,7 @@ app.post('/login', async (req,res) => {
   })
 
   // update post
-  app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
+  app.put('/api/post', uploadMiddleware.single('file'), async (req, res) => {
     mongoose.connect(process.env.MONGODB_URI);
     let url = null;
     if (req.file) {

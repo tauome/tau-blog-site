@@ -9,7 +9,7 @@ const baseUrl = process.env.baseUrl;
 useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            fetch('https://tau-blog-site.vercel.app/profile', {
+            fetch('https://tau-blog-site.vercel.app/api/profile', {
             headers: {
             'Authorization': `Bearer ${token}`
             }
@@ -23,7 +23,7 @@ useEffect(() => {
 //invalidate the cookie
 async function logout() {
     const token = localStorage.getItem('token');
-    await fetch(`https://tau-blog-site.vercel.app/logout`, {
+    await fetch(`https://tau-blog-site.vercel.app/api/logout`, {
         headers: {
             'Authorization': `Bearer ${token}`
         },
